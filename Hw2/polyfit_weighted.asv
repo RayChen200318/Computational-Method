@@ -1,0 +1,49 @@
+function [pp] = polyfit_weighted(x, y, m, w)
+    % 输入：
+    %   x, y：1Xn向量，欲拟合的数据点
+    %   m：拟合多项式次数
+    %   w：1Xn向量，权值
+    % 输出：
+    %   pp：1X（m+1）向量，用于返回拟合多项式的系数，按逆序排列，即pp(1)表示x^m的系数。
+
+    % 构造加权的设计矩阵
+    X = bsxfun(@power, x(:), m:-1:0);
+    W = diag(w);  % 构造权重矩阵
+    X = W * X;  % 加权设计矩阵
+    y = W * y(:);  % 加权目标向量
+
+    % 求解加权最小二乘问题
+    pp = X \ y;
+
+    % 返回逆序的系数向量
+    pp = pp(end:-1:1)';
+end
+
+
+function main()
+    % 数据点
+    x = 1:12;
+    y = [0 0 0 0 0 0 1 1 1 1 1 1];
+
+    % 权值
+    w1 = [8 8 8 8 8 8 1 1 1 1 1 1];
+    w2 = [1 1 1 1 1 1 8 8 8 8 8 8];
+
+    % 拟合多项式次数
+    m = 4;
+
+    % 调用polyfit_weighted函数
+    pp1 = polyfit_weighted(x, y, m, w1);
+    pp2 = polyfit_weighted(x, y, m, w2);
+
+    % 绘制结果
+    figure;
+    hold on;
+    plot(x, y, 'ko');  % 绘制数据点
+    plot(x, polyval(pp1, x), 'r-');  % 绘制拟合曲线
+    plot(x, polyval(pp2, x), 'b-');  % 绘制拟合曲线
+    hold off;
+    legend('Data', 'Fit with w1', 'Fit with w2');
+    xlabel('x');
+    ylabel('y');
+end

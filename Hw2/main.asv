@@ -1,0 +1,35 @@
+function main()
+    % 数据点
+    x = 1:12;
+    y = [0 0 0 0 0 0 1 1 1 1 1 1];
+
+    % 权值
+    w1 = [8 8 8 8 8 8 1 1 1 1 1 1];
+    w2 = [1 1 1 1 1 1 8 8 8 8 8 8];
+    w3 = [1 1 1 1 1 1 1 1 1 1 1 1];
+
+    % 拟合多项式次数
+    m = 4;
+
+    % 调用polyfit_weighted函数
+    pp1 = polyfit_weighted(x, y, m, w1);
+    pp2 = polyfit_weighted(x, y, m, w2);
+    pp3 = polyfit_weighted(x, y, m, w3);
+
+    % 调用Matlab自带的polyfit函数
+    pp4 = polyfit(x,y,m);
+
+    
+    % 绘制结果
+    figure;
+    hold on;
+    plot(x, y, 'ko');  % 绘制数据点
+    plot(x, polyval(pp1, x), 'r-');  % 绘制拟合曲线
+    plot(x, polyval(pp2, x), 'b-');  % 绘制拟合曲线   
+    ylim([-5000,5000]);  % 设置y轴的取值范围
+    hold off;
+    legend('Data', 'Fit with w1', 'Fit with w2');
+    xlabel('x');
+    ylabel('y');
+
+end
